@@ -16,18 +16,28 @@ with st.sidebar:
 st.header("1. 기본 정보")
 col1, col2 = st.columns([1, 2])
 with col1:
-    avatar_url = st.text_input("프로필 이미지 URL", "/workspaces/260401_suimmme/dog.png")
+    avatar_url = st.text_input("프로필 이미지 URL", "dog.png")
     full_name = st.text_input("이름", "박수임")
     job_title = st.text_input("학교", "서울은진초등학교")
     location = st.text_input("위치", "Seoul, Korea")
 with col2:
-    # 로컬 경로 또는 URL 적용(고정 크기 조정)
+    # 로컬 경로(리포지토리 파일) 또는 URL 처리 (고정 크기 조정)
+    from pathlib import Path
+    from PIL import Image
+
+    local_path = Path(avatar_url)
+    if not local_path.is_absolute():
+        local_path = Path.cwd() / local_path
+
     try:
-        from PIL import Image
-        img = Image.open(avatar_url)
-        st.image(img, caption="프로필 사진", width=200)
-    except Exception:
-        st.image(avatar_url, caption="프로필 사진", width=200)
+        if local_path.is_file():
+            img = Image.open(local_path)
+            st.image(img, caption="프로필 사진", width=200)
+        else:
+            st.image(avatar_url, caption="프로필 사진", width=200)
+    except Exception as e:
+        st.error(f"이미지 로드 실패: {e}")
+        st.image("https://via.placeholder.com/200", caption="기본 프로필 사진", width=200)
 
 # 소개 및 핵심 역량
 st.header("2. 자기소개")
