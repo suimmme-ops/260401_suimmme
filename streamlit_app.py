@@ -1,67 +1,61 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
+import datetime
 
-st.set_page_config(page_title="Streamlit 요소 샘플", layout="wide")
+st.set_page_config(page_title="나의 프로필", layout="wide", page_icon="👤")
 
-st.title("🎉 Streamlit UI 요소 데모")
-st.markdown("Streamlit에서 사용할 수 있는 대표적인 UI 컴포넌트를 보여주는 예제 페이지입니다.")
+st.title("👤 나의 프로필 웹앱")
+st.markdown("안녕하세요! 아래 정보를 통해 간단한 자기소개와 주요 역량을 보여주는 프로필 앱입니다.")
 
-st.header("1. 텍스트")
-st.subheader("1-1. 다양한 텍스트")
-st.write("일반 텍스트 출력: Hello Streamlit!")
-st.caption("캡션 텍스트")
-st.code("print('Hello, world!')", language='python')
-
-st.header("2. 입력 위젯")
-col1, col2, col3 = st.columns(3)
-with col1:
-    text_input = st.text_input("텍스트 입력", "여기에 입력하세요")
-    number_input = st.number_input("숫자 입력", min_value=0, max_value=100, value=10)
-with col2:
-    date_input = st.date_input("날짜 선택")
-    checkbox = st.checkbox("체크박스")
-with col3:
-    selectbox = st.selectbox("선택 상자", ["옵션 A", "옵션 B", "옵션 C"])
-    multiselect = st.multiselect("다중 선택", ["사과", "바나나", "체리"], default=["사과"])
-
-st.write("입력 결과:", text_input, number_input, date_input, checkbox, selectbox, multiselect)
-
-st.header("3. 버튼 및 액션")
-if st.button("클릭하세요"):
-    st.success("버튼을 눌렀습니다!")
-
-if st.button("경고 버튼"):
-    st.warning("주의: 버튼이 눌렸습니다.")
-
-st.header("4. 레이아웃")
-with st.expander("추가 정보 숨기기/보이기"):
-    st.write("확장 가능한 패널 내부의 텍스트입니다.")
-
-st.echo("with st.echo(): 코드 + 실행 결과 동시 표시")
-
-st.header("5. 표와 데이터")
-chart_data = pd.DataFrame(np.random.randn(20, 3), columns=["a", "b", "c"])
-st.dataframe(chart_data)
-st.table(chart_data.head())
-st.line_chart(chart_data)
-st.bar_chart(chart_data)
-
-st.header("6. 미디어")
-st.image("https://static.streamlit.io/examples/dog.jpg", caption="강아지 이미지 예시", use_column_width=True)
-st.audio("https://www2.cs.uic.edu/~i101/SoundFiles/BabyElephantWalk60.wav")
-st.video("https://www.youtube.com/watch?v=JwYX52BP2Sk")
-
-st.header("7. 사이드바")
+# 사이드바 설정
 with st.sidebar:
-    st.title("사이드바")
-    st.write("사이드바에서 설정합니다.")
-    sidebar_slider = st.slider("슬라이더", min_value=0, max_value=100, value=25)
+    st.header("설정")
+    show_contact = st.checkbox("연락처 표시", value=True)
+    theme = st.selectbox("테마", ["기본", "미니멀", "컬러풀"])
 
-st.write("사이드바 슬라이더 값:", sidebar_slider)
+# 기본 정보 입력
+st.header("1. 기본 정보")
+col1, col2 = st.columns([1, 2])
+with col1:
+    avatar_url = st.text_input("프로필 이미지 URL", "/workspaces/260401_suimmme/dog.png")
+    full_name = st.text_input("이름", "박수임")
+    job_title = st.text_input("학교", "서울은진초등학교")
+    location = st.text_input("위치", "Seoul, Korea")
+with col2:
+    # 로컬 경로 또는 URL 적용(고정 크기 조정)
+    try:
+        from PIL import Image
+        img = Image.open(avatar_url)
+        st.image(img, caption="프로필 사진", width=200)
+    except Exception:
+        st.image(avatar_url, caption="프로필 사진", width=200)
 
-st.header("8. 상태 표시")
-with st.spinner("로딩중..."):
-    import time
-    time.sleep(0.2)
-st.success("로드 완료!")
+# 소개 및 핵심 역량
+st.header("2. 자기소개")
+intro = st.text_area("한 줄 소개", "안녕하세용 ʚ₍ᐢ˶ᵔ ᵕ ᵔ˶ꕤᐢ₎ɞ")
+
+
+st.header("3. 관심사")
+skills = st.multiselect("취미", ["공부", "독서", "디지털드로잉", "여행", "런닝", "웹앱", "연구"], default=["공부", "독서", "디지털드로잉", "여행", "런닝", "웹앱","연구"])
+ 
+
+st.header("4. 경력/프로젝트")
+experience = st.text_area("경력 및 프로젝트 요약", "이것저것 항상 무언가를 하고 있어요 곧 책이 나옵니다 ㅎㅎㅎ")
+
+
+# 연락처
+if show_contact:
+    st.header("5. 연락처")
+    email = st.text_input("이메일", "dpsel7@sen.go.kr")
+    phone = st.text_input("전화번호", "010-****-****")
+    linkedin = st.text_input("LinkedIn", "https://www.linkedin.com/in/example")
+    st.write(f"- 이메일: {email}")
+    st.write(f"- 전화번호: {phone}")
+    st.write(f"- LinkedIn: {linkedin}")
+
+# 추가 정보 패널
+with st.expander("추가 설정 및 잘못된 입력 예시"):
+    st.write("여기에 추가적인 정보 또는 경고를 표시할 수 있습니다.")
+
+# 하단 상태 메시지
+st.success(f"{full_name}님의 프로필이 준비되었습니다! | 테마: {theme} | 날짜: {datetime.datetime.now().strftime('%Y-%m-%d')}")
+
